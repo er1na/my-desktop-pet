@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Desktop Pet</title>
+        <style>
+            html, body {
+                margin: 0;
+                overflow: hidden;
+                background: transparent;
+                -webkit-app-region: drag;
+                cursor: move;
+            }
+            canvas {
+                display: block;
+                -webkit-app-region: no-drag;
+                cursor: default;
+            }
+        </style>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/7.3.2/pixi.min.js"></script>
+    </head>
+    <body>
+        <script src="renderer.js"></script>
+    </body>
+</html>
