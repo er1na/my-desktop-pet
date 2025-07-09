@@ -3,9 +3,9 @@ import path from 'path';
 
 function createWindow() {
     const win = new BrowserWindow({
-        x: 400,
+        x: 300,
         y: 1600,
-        width: 200,
+        width: 300,
         height: 500,
         transparent: true,
         frame: false,
