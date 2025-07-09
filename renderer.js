@@ -1,5 +1,3 @@
-// PIXI.jsはCDNから読み込まれているので、グローバル変数として使用
-
 const app = new PIXI.Application({
   width: 480,
   height: 300,
@@ -7,7 +5,6 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-// 走るスプライトシート
 const runBaseTexture = PIXI.BaseTexture.from('rin_sprite.png');
 const runFrames = [];
 const frameWidth = 1536 / 3 - 32;
@@ -16,10 +13,8 @@ for (let i = 0; i < 3; i++) {
   runFrames.push(new PIXI.Texture(runBaseTexture, new PIXI.Rectangle(i * frameWidth, 0, frameWidth, frameHeight)));
 }
 
-// 座り画像
 const sitTexture = PIXI.Texture.from('rin_pixel.png');
 
-// アニメーションスプライトのクラス
 class AnimatedSprite {
   constructor(textures, frameRate = 6) {
     this.textures = textures;
@@ -56,8 +51,8 @@ sprite.scale.set(0.2);
 
 app.stage.addChild(sprite);
 
-const runScale = 0.2; // 走っている時の大きさ
-const sitScale = 0.09; // 座っている時の大きさ（例）
+const runScale = 0.2;
+const sitScale = 0.09;
 
 let isRunning = true;
 let stopTimeout = null;
@@ -68,19 +63,17 @@ app.ticker.add(() => {
     animatedSprite.update();
     sprite.x += speed;
 
-    // 端で反転（絶対値で判定！）
     if (sprite.x > app.screen.width - Math.abs(sprite.width / 2)) {
       speed = -Math.abs(speed);
       sprite.scale.set(-runScale, runScale);
-      sprite.x = app.screen.width - Math.abs(sprite.width / 2); // 画面内に戻す
+      sprite.x = app.screen.width - Math.abs(sprite.width / 2);
     }
     if (sprite.x < Math.abs(sprite.width / 2)) {
       speed = Math.abs(speed);
       sprite.scale.set(runScale, runScale);
-      sprite.x = Math.abs(sprite.width / 2); // 画面内に戻す
+      sprite.x = Math.abs(sprite.width / 2);
     }
 
-    // ランダムで立ち止まる
     if (Math.random() < 0.005 && !stopTimeout) {
       isRunning = false;
       animatedSprite.stop();
