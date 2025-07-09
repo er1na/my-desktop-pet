@@ -55,12 +55,20 @@ sprite.scale.set(0.2);
 
 app.stage.addChild(sprite);
 
-let speed = 2;
+let speed = 2; // 右向きなら正、左向きなら負
 
 app.ticker.add(() => {
   animatedSprite.update();
   sprite.x += speed;
-  if (sprite.x > app.screen.width + sprite.width / 2) {
-    sprite.x = -sprite.width / 2;
+
+  // 右端に到達したら左向きに反転
+  if (sprite.x > app.screen.width - sprite.width / 2) {
+    speed = -Math.abs(speed); // 左向き
+    sprite.scale.x = -Math.abs(sprite.scale.x); // 反転
+  }
+  // 左端に到達したら右向きに反転
+  if (sprite.x < sprite.width / 2) {
+    speed = Math.abs(speed); // 右向き
+    sprite.scale.x = Math.abs(sprite.scale.x); // 通常
   }
 });
