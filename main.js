@@ -7,7 +7,7 @@ function createWindow() {
         x: Math.floor((width - 1400) / 2),
         y: Math.floor((height + 500) / 2),
         width: 500,
-        height: 500,
+        height: 200,
         transparent: true,
         frame: false,
         alwaysOnTop: false,

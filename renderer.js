@@ -12,7 +12,7 @@ const runBaseTexture = PIXI.BaseTexture.from('rin_sprite.png');
 const runFrames = [];
 const frameWidth = 1536 / 3 - 32;
 const frameHeight = 1024;
-for (let i = 0; i < 6; i++) {
+for (let i = 0; i < 3; i++) {
   runFrames.push(new PIXI.Texture(runBaseTexture, new PIXI.Rectangle(i * frameWidth, 0, frameWidth, frameHeight)));
 }
 
@@ -57,7 +57,7 @@ sprite.scale.set(0.2);
 app.stage.addChild(sprite);
 
 const runScale = 0.2; // 走っている時の大きさ
-const sitScale = 0.08; // 座っている時の大きさ（例）
+const sitScale = 0.09; // 座っている時の大きさ（例）
 
 let isRunning = true;
 let stopTimeout = null;
@@ -68,14 +68,16 @@ app.ticker.add(() => {
     animatedSprite.update();
     sprite.x += speed;
 
-    // 端で反転
-    if (sprite.x > app.screen.width - sprite.width / 2) {
-      speed = -Math.abs(speed); // 必ず負に
-      sprite.scale.x = -Math.abs(runScale); // 必ず負に
+    // 端で反転（絶対値で判定！）
+    if (sprite.x > app.screen.width - Math.abs(sprite.width / 2)) {
+      speed = -Math.abs(speed);
+      sprite.scale.set(-runScale, runScale);
+      sprite.x = app.screen.width - Math.abs(sprite.width / 2); // 画面内に戻す
     }
-    if (sprite.x < sprite.width / 2) {
-      speed = Math.abs(speed); // 必ず正に
-      sprite.scale.x = Math.abs(runScale); // 必ず正に
+    if (sprite.x < Math.abs(sprite.width / 2)) {
+      speed = Math.abs(speed);
+      sprite.scale.set(runScale, runScale);
+      sprite.x = Math.abs(sprite.width / 2); // 画面内に戻す
     }
 
     // ランダムで立ち止まる
@@ -83,11 +85,11 @@ app.ticker.add(() => {
       isRunning = false;
       animatedSprite.stop();
       sprite.texture = sitTexture;
-      sprite.scale.set(sitScale * Math.sign(speed), sitScale); // ←向き維持
+      sprite.scale.set(sitScale * Math.sign(speed), sitScale);
       stopTimeout = setTimeout(() => {
         isRunning = true;
         sprite.texture = animatedSprite.textures[animatedSprite.currentFrame];
-        sprite.scale.set(runScale * Math.sign(speed), runScale); // ←向き維持
+        sprite.scale.set(runScale * Math.sign(speed), runScale);
         animatedSprite.play();
         stopTimeout = null;
       }, 2000 + Math.random() * 2000);
