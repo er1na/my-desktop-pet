@@ -1,12 +1,13 @@
-import { app, BrowserWindow, ipcMain } from 'electron';
+import { app, BrowserWindow, screen, ipcMain } from 'electron';
 import path from 'path';
 
 function createWindow() {
+    const { width, height } = screen.getPrimaryDisplay().workAreaSize;
     const win = new BrowserWindow({
-        x: 300,
-        y: 1600,
-        width: 300,
-        height: 500,
+        x: Math.floor((width - 1400) / 2),
+        y: Math.floor((height + 500) / 2),
+        width: 500,
+        height: 200,
         transparent: true,
         frame: false,
         alwaysOnTop: false,
