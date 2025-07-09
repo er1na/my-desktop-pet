@@ -7,16 +7,17 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
+// 走るスプライトシート
+const runBaseTexture = PIXI.BaseTexture.from('rin_sprite.png');
+const runFrames = [];
 const frameWidth = 1536 / 3 - 32;
 const frameHeight = 1024;
-const frames = [];
-const baseTexture = PIXI.BaseTexture.from('rin_sprite.png');
-
-for (let i = 0; i < 3; i++) {
-  const x = i * frameWidth;
-  const y = 0;
-  frames.push(new PIXI.Texture(baseTexture, new PIXI.Rectangle(x, y, frameWidth, frameHeight)));
+for (let i = 0; i < 6; i++) {
+  runFrames.push(new PIXI.Texture(runBaseTexture, new PIXI.Rectangle(i * frameWidth, 0, frameWidth, frameHeight)));
 }
+
+// 座り画像
+const sitTexture = PIXI.Texture.from('rin_pixel.png');
 
 // アニメーションスプライトのクラス
 class AnimatedSprite {
@@ -46,7 +47,7 @@ class AnimatedSprite {
   }
 }
 
-const animatedSprite = new AnimatedSprite(frames, 6);
+const animatedSprite = new AnimatedSprite(runFrames, 6);
 const sprite = animatedSprite.sprite;
 sprite.anchor.set(0.5);
 sprite.x = app.screen.width / 2;
@@ -55,20 +56,41 @@ sprite.scale.set(0.2);
 
 app.stage.addChild(sprite);
 
-let speed = 2; // 右向きなら正、左向きなら負
+const runScale = 0.2; // 走っている時の大きさ
+const sitScale = 0.08; // 座っている時の大きさ（例）
+
+let isRunning = true;
+let stopTimeout = null;
+let speed = 2;
 
 app.ticker.add(() => {
-  animatedSprite.update();
-  sprite.x += speed;
+  if (isRunning) {
+    animatedSprite.update();
+    sprite.x += speed;
 
-  // 右端に到達したら左向きに反転
-  if (sprite.x > app.screen.width - sprite.width / 2) {
-    speed = -Math.abs(speed); // 左向き
-    sprite.scale.x = -Math.abs(sprite.scale.x); // 反転
-  }
-  // 左端に到達したら右向きに反転
-  if (sprite.x < sprite.width / 2) {
-    speed = Math.abs(speed); // 右向き
-    sprite.scale.x = Math.abs(sprite.scale.x); // 通常
+    // 端で反転
+    if (sprite.x > app.screen.width - sprite.width / 2) {
+      speed = -Math.abs(speed); // 必ず負に
+      sprite.scale.x = -Math.abs(runScale); // 必ず負に
+    }
+    if (sprite.x < sprite.width / 2) {
+      speed = Math.abs(speed); // 必ず正に
+      sprite.scale.x = Math.abs(runScale); // 必ず正に
+    }
+
+    // ランダムで立ち止まる
+    if (Math.random() < 0.005 && !stopTimeout) {
+      isRunning = false;
+      animatedSprite.stop();
+      sprite.texture = sitTexture;
+      sprite.scale.set(sitScale * Math.sign(speed), sitScale); // ←向き維持
+      stopTimeout = setTimeout(() => {
+        isRunning = true;
+        sprite.texture = animatedSprite.textures[animatedSprite.currentFrame];
+        sprite.scale.set(runScale * Math.sign(speed), runScale); // ←向き維持
+        animatedSprite.play();
+        stopTimeout = null;
+      }, 2000 + Math.random() * 2000);
+    }
   }
 });
