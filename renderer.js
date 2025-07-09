@@ -7,7 +7,7 @@ const app = new PIXI.Application({
 });
 document.body.appendChild(app.view);
 
-const frameWidth = 1536 / 3 - 30;
+const frameWidth = 1536 / 3 - 32;
 const frameHeight = 1024;
 const frames = [];
 const baseTexture = PIXI.BaseTexture.from('rin_sprite.png');
@@ -49,12 +49,18 @@ class AnimatedSprite {
 const animatedSprite = new AnimatedSprite(frames, 6);
 const sprite = animatedSprite.sprite;
 sprite.anchor.set(0.5);
-sprite.x = app.screen.width / 3 - 10;
+sprite.x = app.screen.width / 2;
 sprite.y = app.screen.height / 2;
 sprite.scale.set(0.2);
 
 app.stage.addChild(sprite);
 
+let speed = 2;
+
 app.ticker.add(() => {
   animatedSprite.update();
+  sprite.x += speed;
+  if (sprite.x > app.screen.width + sprite.width / 2) {
+    sprite.x = -sprite.width / 2;
+  }
 });
